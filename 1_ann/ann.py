@@ -77,17 +77,51 @@ class NeuralNetwork(nn.Module):  # pytorch'un nn.Module sinifindan miras aliyor
         return x # modelimizin ciktsini return edelim
     
 #create model and compile
+model = NeuralNetwork().to(device)
 
+# kayip fonk. ve optimizasyon algoritmasini belirle
+define_loss_and_optimizer = lambda model: (
+    nn.CrossEntropyLoss(),          # multi class classification problems loss function
+    optim.Adam(model.parameters(), lr = 0.0001)  # update weights with adam
+)
 
-
-
-
-
+criterion, optimizer = define_loss_and_optimizer(model)
 
 # %% train
+def train_model(model, train_loader, criterion, optimizer, epochs = 10):
+    model.train()                             # modelimizi egitim moduna alalim
+    
+    train_losses = [] # her bir epoch sonucunda elde edilen loss degerlerini saklamak icin bir liste
+    
+    for epoch in range(epochs): # belirtilen epoch sayisi kadar egitim yapalim
+        total_loss = 0
+        
+        for images, labels in train_loader: # tum eegitim verileri uzerinde iterasyon gerceklestir
+            images, labels = images.to(device), labels.to(device)# verileri cihaza tasi
+    
+            optimizer.zero_grad()          # gradyanlari sifirla 
+            predictions = model(images)    # modeli uygula, forward pro.
+            loss = criterion(predictions, labels) # loss hesaplama -> y_prediction ile y_real
+            loss.backward()                # geri yayilim yani gradyan hesaplama
+            optimizer.step()               # update weights
+            
+            total_loss = total_loss + loss.item()
+            
+        avg_loss = total_loss / len(train_loader) # ortalama kayip hesaplama
+        train_losses.append(avg_loss)
+        print(f"Epoch {epoch+1} / {epochs}, Loss:{avg_loss:.3f} ")
+        
+    # loss graph
+    plt.figure()
+    plt.plot(range(1, epochs+1), train_losses, marker = "o", linestyle = "-", label = "Train Loss")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.title("Training Loss")
+    plt.legend()
+    plt.show()
 
-
-
+train_model(model, train_loader, criterion, optimizer, epochs=1)
+# %% test
 
 
 
