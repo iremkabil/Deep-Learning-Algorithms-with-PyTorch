@@ -27,7 +27,7 @@ def get_data_loaders(batch_size = 64): #her iterasyonda islenecek veir miktari
     
     return train_loader, test_loader
     
-train_loader, test_loader = get_data_loaders()
+# train_loader, test_loader = get_data_loaders()
 
 # data visualization
 def visualize_samples(loader, n):
@@ -40,7 +40,7 @@ def visualize_samples(loader, n):
         
     plt.show()
 
-visualize_samples(train_loader, 4)
+# visualize_samples(train_loader, 4)
     
 # %% define ann model
     
@@ -77,7 +77,7 @@ class NeuralNetwork(nn.Module):  # pytorch'un nn.Module sinifindan miras aliyor
         return x # modelimizin ciktsini return edelim
     
 #create model and compile
-model = NeuralNetwork().to(device)
+# model = NeuralNetwork().to(device)
 
 # kayip fonk. ve optimizasyon algoritmasini belirle
 define_loss_and_optimizer = lambda model: (
@@ -85,7 +85,7 @@ define_loss_and_optimizer = lambda model: (
     optim.Adam(model.parameters(), lr = 0.0001)  # update weights with adam
 )
 
-criterion, optimizer = define_loss_and_optimizer(model)
+# criterion, optimizer = define_loss_and_optimizer(model)
 
 # %% train
 def train_model(model, train_loader, criterion, optimizer, epochs = 10):
@@ -120,11 +120,34 @@ def train_model(model, train_loader, criterion, optimizer, epochs = 10):
     plt.legend()
     plt.show()
 
-train_model(model, train_loader, criterion, optimizer, epochs=1)
+# train_model(model, train_loader, criterion, optimizer, epochs=1)
 # %% test
+def test_model(model, test_loader):
+    model.eval()  #modelimizi degerlendirme moduna al
+    correct = 0     # dogur tahmin sayaci
+    total = 0       # toplam veri sayisi
+    
+    with torch.no_grad():   # gradyan hesaplama gereksiz
+        for images, labels in test_loader: #test veri kumesini donguye al
+            images,labels = images.to(device), labels.to(device) # verileri cihaza tasi
+            predictions = model(images)
+            _, predicted = torch.max(predictions, 1)  # en yuksek olasilik sinifin etiketini bul
+            total += labels.size(0)  # toplam veri sayisini guncelle
+            correct += (predicted == labels).sum().item()  #dogru tahminleri say
+            
+    print(f"Test Accuracy: {100*correct/total:.3f}%")
+# test_model(model, test_loader)
+            
 
+# %% main
 
-
+if __name__ == "__main__":
+    train_loader, test_loader = get_data_loaders()  #veri yukleyicilerini al
+    visualize_samples(train_loader, 5)
+    model = NeuralNetwork().to(device)
+    criterion, optimizer = define_loss_and_optimizer(model)
+    train_model(model, train_loader, criterion, optimizer)
+    test_model(model, test_loader)
 
 
 
