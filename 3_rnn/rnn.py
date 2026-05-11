@@ -1,8 +1,9 @@
 """
-rnn: tekrarlayan sinir aglari: zaman serilerinde kullanyorduk: kisa ozet
+rnn: tekrarlayan sinir aglari: zaman serilerinde kullanıyorduk
 
-veri seti secme
-
+ANN → görüntüyü düz vektör gibi görüyordu.
+CNN → görüntüdeki uzaysal/desensel özellikleri öğreniyordu.
+RNN → sıraya bağlı verilerde geçmiş bilgiyi kullanarak sonraki değeri tahmin eder.
 """
 
 # %% veriyi olustur and gorsellestirme
