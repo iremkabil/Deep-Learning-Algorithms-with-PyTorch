@@ -1,6 +1,43 @@
 """
 Problem tanimi: CIFAR10 veriseti siniflandirma problemi
 CNN    
+
+ANN: Görselin piksel yapısını erken kaybeder.
+CNN: Görselin uzaysal yapısını koruyarak öğrenir.
+
+CNN’de ANN’den farklı olarak pooling vardır. Boyutu yarıya indirir
+
+3x32x32 renkli görüntü
+→ Convolution
+→ ReLU
+→ Pooling
+→ Convolution
+→ ReLU
+→ Pooling
+→ Flatten
+→ Fully Connected
+→ Output
+
+------------------------------------------
+
+PyTorch görüntüyü şu formatta tutar:
+[channel, height, width]
+
+Ama Matplotlib görüntüyü şu formatta ister:
+[height, width, channel]
+
+np.transpose(np_img, (1,2,0))
+
+-----------------------------------------
+Adam: Learning rate’i parametrelere göre daha adaptif ayarlar.
+SGD: Daha klasik ve sade bir optimizasyon yöntemidir.
+Momentum: Güncellemelere ivme kazandırır.
+
+-----------------------------------------
+SGD = yürümek
+SGD + momentum = eğimli yolda hızlanarak ilerlemek
+Adam = adım boyunu daha akıllı ayarlayan yöntem
+
 """
 
 # %% import libraries
@@ -72,7 +109,7 @@ class CNN(nn.Module):
         
         self.conv1 = nn.Conv2d(3, 32, kernel_size = 3, padding = 1) # in_channels = rgb 3, out_channels filtre sayisi, kernel_size 3x3
         self.relu = nn.ReLU() # aktivayon fonksiyonu
-        self.pool = nn.MaxPool2d(kernel_size = 2, stride = 2) # 2x2 boyutunda poolşng katmani
+        self.pool = nn.MaxPool2d(kernel_size = 2, stride = 2) # 2x2 boyutunda pooling katmani
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding = 1) # 64 filtreli ikinci convolution layer
         self.dropout = nn.Dropout(0.2) # dropout %20 oraninda calisir
         self.fc1 = nn.Linear(64*8*8, 128) # fully connected layer giris = 4096, output = 128
