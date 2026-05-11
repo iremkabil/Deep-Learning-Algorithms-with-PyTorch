@@ -19,7 +19,7 @@ def get_data_loaders(batch_size = 64): #her iterasyonda islenecek veir miktari
         ])
     
     train_set = torchvision.datasets.MNIST(root = "./data", train = True, download =True, transform = transform)
-    test_set = torchvision.datasets.MNIST(root = "./data", train = True, download =True, transform = transform)
+    test_set = torchvision.datasets.MNIST(root = "./data", train = False, download =True, transform = transform)
     
     # pytorch veri yukleyicisini olustur
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
@@ -32,9 +32,9 @@ def get_data_loaders(batch_size = 64): #her iterasyonda islenecek veir miktari
 # data visualization
 def visualize_samples(loader, n):
     images, labels = next(iter(loader)) # ilk batch' ten goruntu ve etiketleri alalim
-    fig, axes = plt.subplots(1, 5, figsize=(10,5)) # n farkli goruntu icin gorsellestirme alani
+    fig, axes = plt.subplots(1, n, figsize=(2*n, 5)) # n farkli goruntu icin gorsellestirme alani
     for i in range(n):
-        axes[i].imshow(images[i].squeeze(), cmap = "gray")
+        axes[i].imshow(images[i].squeeze(), cmap = "gray") # squeeze() gereksiz boyutu kaldırır: [1, 28, 28] → [28, 28]
         axes[i].set_title(f"Label: {labels[i].item()}")  # goruntuye ait sinif etiketini baslik olarak yaz
         axes[i].axis("off")  # eksenleri gizli
         
@@ -48,7 +48,7 @@ def visualize_samples(loader, n):
 class NeuralNetwork(nn.Module):  # pytorch'un nn.Module sinifindan miras aliyor
     
     def __init__(self):
-        super(NeuralNetwork, self).__init__()
+        super(NeuralNetwork, self).__init__() # Ana sınıf olan nn.Module’ın özelliklerini başlatır.
     
         # elimizde bulunan goruntuleri vektor haline cevirelim (1D)
         self.flatten = nn.Flatten()
@@ -141,6 +141,7 @@ def test_model(model, test_loader):
 
 # %% main
 
+# Bu dosya doğrudan çalıştırılıyorsa aşağıdaki kodları çalıştır.Eğer bu dosya başka bir dosyadan import edilirse, bu blok otomatik çalışmaz.
 if __name__ == "__main__":
     train_loader, test_loader = get_data_loaders()  #veri yukleyicilerini al
     visualize_samples(train_loader, 5)
